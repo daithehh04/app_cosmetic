@@ -24,6 +24,7 @@ import { useNavigation } from "@react-navigation/native";
 import { setNumberOrder } from "../../store/slice/profileSlice";
 const CartScreen = () => {
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [itemsSelected, setItemsSelected] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
@@ -115,12 +116,14 @@ const CartScreen = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         // Lấy userId và name từ hàm getProfile
         const { userId, name } = await getProfile();
         // Gọi API lấy dữ liệu giỏ hàng sau khi có userId
         if (userId) {
           await fetchOrderById(userId, "pending", setItems); // Gọi API lấy giỏ hàng
         }
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching profile or cart:", error);
       }
@@ -128,6 +131,10 @@ const CartScreen = () => {
 
     fetchData(); // Gọi hàm async trong useEffect
   }, []);
+
+  if (loading) {
+    return <Text>Loading....</Text>;
+  }
 
   return (
     <View style={styles.container}>
