@@ -1,17 +1,10 @@
-import API_APP from "../config";
+import instance from "../../api/api";
+
 const deleteOrderById = async (id) => {
   // http://localhost:3000/v1/api/order/9
   try {
-    const res = await fetch(`${API_APP}/v1/api/order/${id}`, {
-      method: "DELETE",
-    });
-    if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(errData.message || "Something went wrong");
-    }
-    const data = await res.json();
-    // console.log(data);
-    return data;
+    const response = await instance.delete(`/order/${id}`, {});
+    return response.data;
   } catch (error) {
     console.log("Error fetching deleteOrderById ", error.message || error);
   }

@@ -1,22 +1,11 @@
-import API_APP from "../config";
+import instance from "../../api/api";
+
 const fetchOrderById = async (id, status, setOrder) => {
-  // http://localhost:4000/v1/api/orders?userId=2&status=pending
   try {
-    const res = await fetch(
-      `${API_APP}/v1/api/orders?userId=${id}&status=${status}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+    const response = await instance.get(
+      `/orders?userId=${id}&status=${status}`
     );
-    if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(errData.message || "Something went wrong");
-    }
-    const data = await res.json();
-    setOrder(data.data.carts);
+    setOrder(response.data.data.carts);
   } catch (error) {
     console.log("Error fetching fetchOrderById ", error.message || error);
   }

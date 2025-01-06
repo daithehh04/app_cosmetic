@@ -1,5 +1,5 @@
 // ProfileScreen.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons"; // or any other icon set
 import styles from "./style";
@@ -7,13 +7,25 @@ import { deleteProfile } from "../../utils/user/profileUser";
 import { clearProfileRedux } from "../../store/slice/profileSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import fetchLogout from "../../utils/user/fetchLogout";
+import StorageService from "../../service/StorageService";
 const ProfileScreen = () => {
   const dispatch = useDispatch();
-  const { userId, email, name } = useSelector((state) => state.profile);
+  const { email, name } = useSelector((state) => state.profile);
+
   const [userName, setUserName] = useState(name);
   const [userEmail, setUserEmail] = useState(email);
+  const getEmail = async () => {
+    const mail = await StorageService.getKey("email");
+    setUserEmail(mail);
+  };
+
+  useEffect(() => {
+    getEmail();
+  }, []);
   const navigation = useNavigation();
   const handleLogout = async () => {
+    await fetchLogout();
     await deleteProfile();
     dispatch(clearProfileRedux());
     navigation.navigate("Login");

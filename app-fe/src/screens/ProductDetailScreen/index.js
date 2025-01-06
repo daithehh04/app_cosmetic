@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Image, ScrollView, Pressable } from "react-native";
-import { Text } from "react-native-elements";
+import { Text } from "react-native";
 import styles from "./style";
 import formatCurrency from "../../utils/formatMoney";
 import { getProfile } from "../../utils/user/profileUser";

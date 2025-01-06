@@ -5,7 +5,7 @@ const { default: helmet } = require("helmet");
 const morgan = require("morgan");
 const cors = require("cors");
 const app = express();
-
+require("./dbs/init.redis");
 app.use(cors());
 
 // init middleware

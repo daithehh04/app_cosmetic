@@ -13,6 +13,7 @@ import ProductsScreen from "../screens/ProductsScreen";
 import ArcilesDetailsScreen from "../screens/ArctilesDetailsScreen";
 import ProfileScreen from "../screens/Profile";
 import { useSelector } from "react-redux";
+import OTPVerify from "../screens/OTPVerify";
 const Stack = createNativeStackNavigator();
 const Routes = () => {
   const { userId } = useSelector((state) => state.profile);
@@ -53,6 +54,11 @@ const Routes = () => {
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="OTPVerify"
+          component={OTPVerify}
           options={{ headerShown: false }}
         />
         {/* // comment require Login */}

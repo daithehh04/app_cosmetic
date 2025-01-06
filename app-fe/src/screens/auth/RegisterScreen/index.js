@@ -55,31 +55,30 @@ export default function RegisterScreen({ navigation }) {
     },
   });
   const onPressSend = async (formData) => {
-    // console.log(formData);
+    const { email, password } = formData;
     try {
-      const { user_name, email, password } = formData;
-      const data = { name: user_name, email, password };
-      // console.log(data);
-      const res = await fetch(`${API_APP}/v1/api/auth/signup`, {
+      const res = await fetch(`${API_APP}/v1/api/send-code`, {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          email,
+          password,
+          isSignUp: true,
+          isSignIn: false,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
       });
-
-      if (!res.ok) {
-        const result = await res.json();
-        console.log(result.message);
-        Alert.alert("Register Failed", `${result.message}`);
+      const result = await res.json();
+      if (result?.data?.success) {
+        navigation.reset({
+          routes: [{ name: "OTPVerify", params: formData, register: true }],
+        });
+      } else {
+        Alert.alert("Đăng kí thất bại", "Tài khoản đã tồn tại!");
         return;
       }
-      const result = await res.json();
-      Alert.alert("Register Success", `${result.message}`);
-      navigation.navigate("Login");
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
   const handleProceed = () => {
     if (isChecked) {

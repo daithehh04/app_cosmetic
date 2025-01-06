@@ -18,6 +18,7 @@ import { setProfile, getProfile } from "../../../utils/user/profileUser";
 import { setProfileRedux } from "../../../store/slice/profileSlice";
 import { useDispatch, useSelector } from "react-redux";
 import API_APP from "../../../utils/config"; // lay bien moi truong
+import StorageService from "../../../service/StorageService";
 export default function LoginScreen({ navigation }) {
   const dispatch = useDispatch();
   const { userId, name, email } = useSelector((state) => state.profile);
@@ -44,41 +45,44 @@ export default function LoginScreen({ navigation }) {
   });
   const onPressSend = async (formData) => {
     try {
-      const res = await fetch(`${API_APP}/v1/api/auth/login`, {
+      const res = await fetch(`${API_APP}/v1/api/send-code`, {
         method: "POST",
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          isSignUp: false,
+          isSignIn: true,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
       });
       const result = await res.json();
-      if (!res.ok) {
-        console.log(result.message);
-        Alert.alert("Login Failed", `${result.message}`);
+      console.log("result::", result);
+
+      if (result?.data?.status === 200) {
+        navigation.reset({
+          routes: [{ name: "OTPVerify", params: formData }],
+        });
+      } else if (result?.data?.spam) {
+        Alert.alert(
+          "Đăng nhập thất bại!",
+          "Bạn đã yêu cầu OTP quá nhiều lần, vui lòng thử lại sau 24 giờ."
+        );
+        return;
+      } else {
+        Alert.alert(
+          "Đăng nhập thất bại!",
+          "Tên đăng nhập hoặc mật khẩu không chính xác!"
+        );
         return;
       }
-      console.log(result);
-      const userId = result.data.id.toString();
-      const name = result.data.name.toString();
-      const email = result.data.email.toString();
-
-      console.log(userId, name);
-      dispatch(setProfileRedux({ userId, name, email }));
-      await setProfile(userId, name, email);
-      Alert.alert("Login Success", `${result.message}`);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Home" }],
-      });
     } catch (error) {
-      console.log(error);
+      Alert.alert(
+        "Đăng nhập thất bại!",
+        "Tên đăng nhập hoặc mật khẩu không chính xác!"
+      );
+      return;
     }
-  };
-  const handleNoLogin = () => {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Home" }],
-    });
   };
   useEffect(() => {
     const checkProfile = async () => {
@@ -157,11 +161,6 @@ export default function LoginScreen({ navigation }) {
       </View>
       <View style={styles.container_btn_submit}>
         <GradientButton title="Đăng nhập" onPress={handleSubmit(onPressSend)} />
-      </View>
-      <View style={styles.container_no_login}>
-        <Pressable onPress={handleNoLogin}>
-          <Text style={styles.text_no_login}>Không đăng nhập</Text>
-        </Pressable>
       </View>
       <View style={styles.container_link_register}>
         <Text>Chưa có tài khoản ?</Text>

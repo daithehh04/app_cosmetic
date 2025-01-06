@@ -1,28 +1,16 @@
 import toastCustom from "../notifications/toastCustom";
 import { Platform, Alert } from "react-native";
-import API_APP from "../config";
+import instance from "../../api/api";
 const buyProducts = async (data) => {
   try {
-    const res = await fetch(`${API_APP}/v1/api/order`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    // console.log(dataRes);
-    if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(errData.message || "Something went wrong");
-    }
-
+    await instance.post("/order", JSON.stringify(data));
     if (Platform.OS === "android") {
       toastCustom("Order created successfully");
     } else {
       Alert.alert("Notification", "Order created successfully");
     }
   } catch (error) {
-    console.log("Error fetching byMedinines:", error.message || error);
+    console.log("Error fetching:", error.message || error);
   }
 };
 export default buyProducts;

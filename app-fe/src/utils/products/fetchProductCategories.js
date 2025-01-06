@@ -1,15 +1,8 @@
-import API_APP from "../config";
+import instance from "../../api/api";
 const fetchProductsCategories = async (setCategories) => {
   try {
-    const res = await fetch(`${API_APP}/v1/api/category-product`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await res.json();
-    // console.log(data);
-    setCategories(data.data.categoryProduct.reverse());
+    const response = await instance.get(`/category-product`);
+    setCategories(response.data.data.categoryProduct.reverse());
   } catch (error) {
     console.log(error);
   }

@@ -2,6 +2,7 @@ import { StyleSheet } from "react-native";
 import { scaleHeight, scaleWidth } from "../../utils/config";
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 50 * scaleWidth,
     flex: 1,
     paddingHorizontal: 10 * scaleWidth,
     // alignItems: 'center',
